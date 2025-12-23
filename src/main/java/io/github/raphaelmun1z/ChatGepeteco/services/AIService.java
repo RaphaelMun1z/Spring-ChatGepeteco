@@ -1,17 +1,17 @@
-package io.github.raphaelmun1z.ChatGepeteco.entities;
+package io.github.raphaelmun1z.ChatGepeteco.services;
 
 import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ChatService {
+public class AIService {
     private final OllamaChatModel model;
 
-    public ChatService(OllamaChatModel model) {
+    public AIService(OllamaChatModel model) {
         this.model = model;
     }
 
-    public String chat(String input) {
+    public String processInputMessage(String input) {
         return model.call(input);
     }
 }
