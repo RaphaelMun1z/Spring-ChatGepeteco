@@ -1,5 +1,6 @@
 package io.github.raphaelmun1z.ChatGepeteco.services;
 
+import io.github.raphaelmun1z.ChatGepeteco.dtos.ChatResponseDTO;
 import io.github.raphaelmun1z.ChatGepeteco.entities.Chat;
 import io.github.raphaelmun1z.ChatGepeteco.entities.Message;
 import io.github.raphaelmun1z.ChatGepeteco.entities.enums.Role;
@@ -25,7 +26,8 @@ public class ChatService {
     }
 
     public Chat createChat(Chat chat) {
-        return chatRepository.save(chat);
+        chat = chatRepository.save(chat);
+        return chat;
     }
 
     public List<Chat> getAllChats() {
@@ -41,7 +43,7 @@ public class ChatService {
     public Message sendMessage(String chatId, String inputMsg) {
         Chat targetChat = getChatById(chatId);
         String responseMsg = aiService.processInputMessage(inputMsg);
-        Message newMessage = new Message(responseMsg, Role.USER, LocalDateTime.now(), targetChat);
+        Message newMessage = new Message(null, responseMsg, LocalDateTime.now(), targetChat);
         newMessage.setChat(targetChat);
         targetChat.getMessages().add(newMessage);
         return messageRepository.save(newMessage);

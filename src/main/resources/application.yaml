@@ -1,13 +1,39 @@
 spring:
   application:
     name: ChatGepeteco
-server:
-  servlet:
-    context-path: /api
+  datasource:
+    url: jdbc:postgresql://localhost:5433/chat_gepeteco_db
+    username: postgres
+    password: password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
   ai:
     ollama:
       base-url: http://localhost:11434/
       chat:
         model: gemma3:1b
+
+security:
+  password:
+    encoder:
+      secret: "DQvnCBpT2X1o797Mqez9xNtD9kPPxulf"
+      iterations: 185000
+      salt-length: 16
+  jwt:
+    token:
+      secret-key: "fjilmpmaKTk4ZpLrsP2ecqFfZpqzP1bY"
+      expire-length: 3600000
+  spring-doc:
+    paths-to-match: /api/**
+    swagger-ui:
+      use-root-path: true
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
 cors:
   originPatterns: http://localhost:8080,http://localhost:8889,http://localhost:80,http://localhost:4200

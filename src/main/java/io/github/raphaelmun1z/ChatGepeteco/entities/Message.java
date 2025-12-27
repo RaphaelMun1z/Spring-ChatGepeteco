@@ -1,8 +1,9 @@
 package io.github.raphaelmun1z.ChatGepeteco.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.github.raphaelmun1z.ChatGepeteco.entities.enums.Role;
 import jakarta.persistence.*;
+import lombok.ToString;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -11,29 +12,29 @@ import java.util.Objects;
 @Table(name = "tb_messages")
 public class Message {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
     @Lob
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
-
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @ManyToOne
-    @JoinColumn(name = "chat_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "chat_id", nullable = false)
     @JsonIgnore
+    @ToString.Exclude
     private Chat chat;
 
     public Message() {
     }
 
-    public Message(String content, Role role, LocalDateTime createdAt, Chat chat) {
+    public Message(String id, String content, LocalDateTime createdAt, Chat chat) {
+        this.id = id;
         this.content = content;
-        this.role = role;
         this.createdAt = createdAt;
         this.chat = chat;
     }
@@ -50,16 +51,12 @@ public class Message {
         this.content = content;
     }
 
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public Chat getChat() {
@@ -72,25 +69,14 @@ public class Message {
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Message message = (Message) o;
-        return Objects.equals(id, message.id) && Objects.equals(content, message.content) && role == message.role && Objects.equals(createdAt, message.createdAt) && Objects.equals(chat, message.chat);
+        return Objects.equals(id, message.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, content, role, createdAt, chat);
-    }
-
-    @Override
-    public String toString() {
-        final StringBuffer sb = new StringBuffer("Message{");
-        sb.append("id='").append(id).append('\'');
-        sb.append(", content='").append(content).append('\'');
-        sb.append(", role=").append(role);
-        sb.append(", createdAt=").append(createdAt);
-        sb.append(", chat=").append(chat);
-        sb.append('}');
-        return sb.toString();
+        return getClass().hashCode();
     }
 }

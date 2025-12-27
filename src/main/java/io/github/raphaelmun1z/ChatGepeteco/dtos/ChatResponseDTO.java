@@ -3,6 +3,7 @@ package io.github.raphaelmun1z.ChatGepeteco.dtos;
 import io.github.raphaelmun1z.ChatGepeteco.entities.Chat;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,9 +24,9 @@ public record ChatResponseDTO(
             chat.getSystemInstruction(),
             chat.getCreatedAt(),
             chat.getUpdatedAt(),
-            chat.getMessages().stream()
-                .map(MessageResponseDTO::new)
-                .collect(Collectors.toList())
+            chat.getMessages() != null
+                ? chat.getMessages().stream().map(MessageResponseDTO::new).collect(Collectors.toList())
+                : new ArrayList<>()
         );
     }
 }

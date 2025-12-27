@@ -1,6 +1,11 @@
 package io.github.raphaelmun1z.ChatGepeteco.entities;
 
+import io.github.raphaelmun1z.ChatGepeteco.entities.usuario.Usuario;
 import jakarta.persistence.*;
+import lombok.Builder;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -8,37 +13,59 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
+@Builder
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "tb_chats")
 public class Chat {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
+    @Column(nullable = false)
     private String title;
 
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<Message> messages = new ArrayList<>();
 
-    private LocalDateTime updatedAt;
-    private LocalDateTime createdAt;
-    private String userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private Usuario user;
+
     private String modelName;
 
     @Column(columnDefinition = "TEXT")
     private String systemInstruction;
 
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+
     public Chat() {
     }
 
-    public Chat(String id, String title, List<Message> messages, LocalDateTime updatedAt, LocalDateTime createdAt, String userId, String modelName, String systemInstruction) {
+    public Chat(String id, String title, List<Message> messages, Usuario user, String modelName, String systemInstruction, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.title = title;
         this.messages = messages;
-        this.updatedAt = updatedAt;
-        this.createdAt = createdAt;
-        this.userId = userId;
+        this.user = user;
         this.modelName = modelName;
         this.systemInstruction = systemInstruction;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
+    public void addMessage(Message message) {
+        messages.add(message);
+        message.setChat(this);
+    }
+
+    public void removeMessage(Message message) {
+        messages.remove(message);
+        message.setChat(null);
     }
 
     public String getId() {
@@ -57,20 +84,16 @@ public class Chat {
         return messages;
     }
 
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
+    public void setMessages(List<Message> messages) {
+        this.messages = messages;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public Usuario getUser() {
+        return user;
     }
 
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUser(Usuario user) {
+        this.user = user;
     }
 
     public String getModelName() {
@@ -89,30 +112,32 @@ public class Chat {
         this.systemInstruction = systemInstruction;
     }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Chat chat = (Chat) o;
-        return Objects.equals(id, chat.id) && Objects.equals(title, chat.title) && Objects.equals(messages, chat.messages) && Objects.equals(updatedAt, chat.updatedAt) && Objects.equals(createdAt, chat.createdAt) && Objects.equals(userId, chat.userId) && Objects.equals(modelName, chat.modelName) && Objects.equals(systemInstruction, chat.systemInstruction);
+        return Objects.equals(id, chat.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, messages, updatedAt, createdAt, userId, modelName, systemInstruction);
-    }
-
-    @Override
-    public String toString() {
-        final StringBuffer sb = new StringBuffer("Chat{");
-        sb.append("id='").append(id).append('\'');
-        sb.append(", title='").append(title).append('\'');
-        sb.append(", messages=").append(messages);
-        sb.append(", updatedAt=").append(updatedAt);
-        sb.append(", createdAt=").append(createdAt);
-        sb.append(", userId='").append(userId).append('\'');
-        sb.append(", modelName='").append(modelName).append('\'');
-        sb.append(", systemInstruction='").append(systemInstruction).append('\'');
-        sb.append('}');
-        return sb.toString();
+        return getClass().hashCode();
     }
 }
