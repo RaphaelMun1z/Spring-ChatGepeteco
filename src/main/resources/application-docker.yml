@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://bd-postgres:5432/${POSTGRES_DB:chatgepeteco}
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:password}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+  ai:
+    ollama:
+      base-url: http://ia-ollama:11434
+
+springdoc:
+  swagger-ui:
+    enabled: false
+
+server:
+  port: 8080

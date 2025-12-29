@@ -1,39 +1,89 @@
 spring:
   application:
     name: ChatGepeteco
+
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
   datasource:
-    url: jdbc:postgresql://localhost:5433/chat_gepeteco_db
-    username: postgres
-    password: password
     driver-class-name: org.postgresql.Driver
+
   jpa:
+    open-in-view: false
     hibernate:
-      ddl-auto: create
+      ddl-auto: ${JPA_DDL_AUTO:validate}
+
   ai:
     ollama:
-      base-url: http://localhost:11434/
       chat:
-        model: gemma3:1b
+        model: ${OLLAMA_MODEL:gemma3:1b}
 
 security:
   password:
     encoder:
-      secret: "DQvnCBpT2X1o797Mqez9xNtD9kPPxulf"
+      secret: ${PASSWORD_ENCODER_SECRET}
       iterations: 185000
       salt-length: 16
   jwt:
     token:
-      secret-key: "fjilmpmaKTk4ZpLrsP2ecqFfZpqzP1bY"
+      secret-key: ${JWT_SECRET}
       expire-length: 36000000
-  spring-doc:
-    paths-to-match: /api/**
-    swagger-ui:
-      use-root-path: true
+
+springdoc:
+  paths-to-match: /api/**
+  swagger-ui:
+    use-root-path: true
 
 server:
-  port: 8080
   servlet:
     context-path: /api
 
 cors:
-  originPatterns: http://localhost:8080,http://localhost:8889,http://localhost:80,http://localhost:4200
+  originPatterns: ${CORS_ORIGINS:http://localhost:4200}
+
+#spring:
+#  application:
+#    name: ChatGepeteco
+#
+#  datasource:
+#    url: ${DATABASE_URL}
+#    username: ${DB_USERNAME}
+#    password: ${DB_PASSWORD}
+#    driver-class-name: org.postgresql.Driver
+#
+#  jpa:
+#    hibernate:
+#      ddl-auto: ${JPA_DDL_AUTO:validate}
+#    open-in-view: false
+#
+#  ai:
+#    ollama:
+#      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+#      chat:
+#        model: ${OLLAMA_MODEL:gemma3:1b}
+#
+#security:
+#  password:
+#    encoder:
+#      secret: ${PASSWORD_ENCODER_SECRET}
+#      iterations: ${PASSWORD_ENCODER_ITERATIONS:185000}
+#      salt-length: ${PASSWORD_ENCODER_SALT_LENGTH:16}
+#
+#  jwt:
+#    token:
+#      secret-key: ${JWT_SECRET}
+#      expire-length: ${JWT_EXPIRE_LENGTH:36000000}
+#
+#springdoc:
+#  paths-to-match: /api/**
+#  swagger-ui:
+#    use-root-path: true
+#    enabled: ${SWAGGER_ENABLED:true}
+#
+#server:
+#  port: ${PORT:8080}
+#  servlet:
+#    context-path: /api
+#
+#cors:
+#  originPatterns: ${CORS_ORIGINS:http://localhost:4200}

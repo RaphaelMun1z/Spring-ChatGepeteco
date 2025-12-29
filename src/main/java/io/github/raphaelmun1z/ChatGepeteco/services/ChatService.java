@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static reactor.core.publisher.Mono.delay;
 
@@ -58,18 +59,27 @@ public class ChatService {
         return new ChatResponseDTO(chat);
     }
 
-    public List<Chat> getAllChats() {
-        return chatRepository.findAll();
+    @Transactional(readOnly = true)
+    public List<ChatResponseDTO> findAllChats() {
+        List<Chat> chats = chatRepository.findAll();
+
+        return chats.stream()
+            .map(ChatResponseDTO::new)
+            .collect(Collectors.toList());
     }
 
-    public Chat getChatById(String chatId) {
-        return chatRepository.findById(chatId)
-            .orElseThrow(() -> new NotFoundException("Chat não encontrado."));
+    @Transactional(readOnly = true)
+    public ChatResponseDTO getChatById(String chatId) {
+        Chat chat = chatRepository.findById(chatId)
+            .orElseThrow(() -> new RuntimeException("Chat não encontrado"));
+
+        return new ChatResponseDTO(chat);
     }
 
     @Transactional
     public MessageResponseDTO sendMessage(String chatId, String inputMsg) {
-        Chat targetChat = getChatById(chatId);
+        Chat targetChat = chatRepository.findById(chatId)
+            .orElseThrow(() -> new RuntimeException("Chat não encontrado"));
 
         Message userMessage = new Message(inputMsg, MessageSender.USER, targetChat);
         messageRepository.save(userMessage);

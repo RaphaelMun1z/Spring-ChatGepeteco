@@ -28,17 +28,13 @@ public class ChatController {
 
     @GetMapping("/all")
     public ResponseEntity<List<ChatResponseDTO>> getAllChats() {
-        List<ChatResponseDTO> list = chatService.getAllChats().stream()
-            .map(ChatResponseDTO::new)
-            .toList();
-
+        List<ChatResponseDTO> list = chatService.findAllChats();
         return ResponseEntity.ok(list);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ChatResponseDTO> getChatById(@PathVariable String id) {
-        Chat chat = chatService.getChatById(id);
-        return ResponseEntity.ok(new ChatResponseDTO(chat));
+        return ResponseEntity.ok(chatService.getChatById(id));
     }
 
     @DeleteMapping("/{id}")

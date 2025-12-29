@@ -1,0 +1,30 @@
+spring:
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: validate
+
+  ai:
+    ollama:
+      base-url: ${OLLAMA_BASE_URL}
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+server:
+  error:
+    include-message: never
+    include-stacktrace: never
+
+logging:
+  level:
+    root: INFO
+    org.springframework: WARN
