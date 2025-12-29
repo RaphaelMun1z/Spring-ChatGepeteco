@@ -1,23 +1,29 @@
 package io.github.raphaelmun1z.ChatGepeteco.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.github.raphaelmun1z.ChatGepeteco.entities.enums.MessageSender;
 import jakarta.persistence.*;
 import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 @Table(name = "tb_messages")
+@EntityListeners(AuditingEntityListener.class)
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Lob
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 10)
+    private MessageSender sender;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
@@ -32,10 +38,9 @@ public class Message {
     public Message() {
     }
 
-    public Message(String id, String content, LocalDateTime createdAt, Chat chat) {
-        this.id = id;
+    public Message(String content, MessageSender sender, Chat chat) {
         this.content = content;
-        this.createdAt = createdAt;
+        this.sender = sender;
         this.chat = chat;
     }
 
@@ -49,6 +54,14 @@ public class Message {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public MessageSender getSender() {
+        return sender;
+    }
+
+    public void setSender(MessageSender sender) {
+        this.sender = sender;
     }
 
     public LocalDateTime getCreatedAt() {

@@ -1,9 +1,6 @@
 package io.github.raphaelmun1z.ChatGepeteco.controllers;
 
-import io.github.raphaelmun1z.ChatGepeteco.dtos.ChatRequestDTO;
-import io.github.raphaelmun1z.ChatGepeteco.dtos.ChatResponseDTO;
-import io.github.raphaelmun1z.ChatGepeteco.dtos.MessageRequestDTO;
-import io.github.raphaelmun1z.ChatGepeteco.dtos.MessageResponseDTO;
+import io.github.raphaelmun1z.ChatGepeteco.dtos.*;
 import io.github.raphaelmun1z.ChatGepeteco.entities.Chat;
 import io.github.raphaelmun1z.ChatGepeteco.entities.Message;
 import io.github.raphaelmun1z.ChatGepeteco.services.ChatService;
@@ -12,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("chat")
@@ -24,17 +22,11 @@ public class ChatController {
 
     @PostMapping
     public ResponseEntity<ChatResponseDTO> createChat(@RequestBody ChatRequestDTO request) {
-        Chat chatEntity = new Chat();
-        chatEntity.setTitle(request.title());
-        chatEntity.setModelName(request.modelName());
-        chatEntity.setSystemInstruction(request.systemInstruction());
-
-        Chat createdChat = chatService.createChat(chatEntity);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ChatResponseDTO(createdChat));
+        ChatResponseDTO createdChat = chatService.createChat(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdChat);
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<ChatResponseDTO>> getAllChats() {
         List<ChatResponseDTO> list = chatService.getAllChats().stream()
             .map(ChatResponseDTO::new)
@@ -57,13 +49,25 @@ public class ChatController {
 
     @PostMapping("/{chatId}/messages")
     public ResponseEntity<MessageResponseDTO> sendMessage(@PathVariable String chatId, @RequestBody MessageRequestDTO request) {
-        Message sentMessage = chatService.sendMessage(chatId, request.content());
-        return ResponseEntity.status(HttpStatus.CREATED).body(new MessageResponseDTO(sentMessage));
+        MessageResponseDTO sentMessage = chatService.sendMessage(chatId, request.content());
+        return ResponseEntity.status(HttpStatus.CREATED).body(sentMessage);
     }
 
     @DeleteMapping("/{chatId}/messages/{msgId}")
     public ResponseEntity<Void> deleteMessage(@PathVariable String chatId, @PathVariable String msgId) {
         chatService.deleteMessage(chatId, msgId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ChatMinDTO>> getUserChats() {
+        List<ChatMinDTO> userChats = chatService.getUserChats();
+        return ResponseEntity.ok(userChats);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Void> updateChatTitle(@PathVariable String id, @RequestBody UpdateChatTitleDTO dto) {
+        chatService.updateChatTitle(id, dto.title());
         return ResponseEntity.noContent().build();
     }
 }
