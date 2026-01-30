@@ -14,6 +14,7 @@ import java.util.Objects;
 @Table(name = "tb_messages")
 @EntityListeners(AuditingEntityListener.class)
 public class Message {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -24,6 +25,9 @@ public class Message {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)
     private MessageSender sender;
+
+    @Column(name = "attachment_name")
+    private String attachmentName;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
@@ -44,6 +48,14 @@ public class Message {
         this.chat = chat;
     }
 
+    // Construtor utilitário opcional com anexo
+    public Message(String content, MessageSender sender, Chat chat, String attachmentName) {
+        this.content = content;
+        this.sender = sender;
+        this.chat = chat;
+        this.attachmentName = attachmentName;
+    }
+
     public String getId() {
         return id;
     }
@@ -62,6 +74,14 @@ public class Message {
 
     public void setSender(MessageSender sender) {
         this.sender = sender;
+    }
+
+    public String getAttachmentName() {
+        return attachmentName;
+    }
+
+    public void setAttachmentName(String attachmentName) {
+        this.attachmentName = attachmentName;
     }
 
     public LocalDateTime getCreatedAt() {
