@@ -8,9 +8,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Builder
@@ -26,7 +24,11 @@ public class Chat {
 
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    private List<Message> messages = new ArrayList<>();
+    private Set<Message> messages = new HashSet<>();
+
+    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private Set<PdfIndex> pdfIndexes = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -47,10 +49,11 @@ public class Chat {
     public Chat() {
     }
 
-    public Chat(String id, String title, List<Message> messages, Usuario user, String modelName, String systemInstruction, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Chat(String id, String title, Set<Message> messages, Set<PdfIndex> pdfIndexes, Usuario user, String modelName, String systemInstruction, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.title = title;
         this.messages = messages;
+        this.pdfIndexes = pdfIndexes;
         this.user = user;
         this.modelName = modelName;
         this.systemInstruction = systemInstruction;
@@ -80,12 +83,20 @@ public class Chat {
         this.title = title;
     }
 
-    public List<Message> getMessages() {
+    public Set<Message> getMessages() {
         return messages;
     }
 
-    public void setMessages(List<Message> messages) {
+    public void setMessages(Set<Message> messages) {
         this.messages = messages;
+    }
+
+    public Set<PdfIndex> getPdfIndexes() {
+        return pdfIndexes;
+    }
+
+    public void setPdfIndexes(Set<PdfIndex> pdfIndexes) {
+        this.pdfIndexes = pdfIndexes;
     }
 
     public Usuario getUser() {

@@ -14,4 +14,9 @@ public class AIService {
     public String processInputMessage(String input) {
         return model.call(input);
     }
+
+    public String processInputWithContext(String context, String question) {
+        String prompt = context + "\n\nPergunta: " + question;
+        return model.call(prompt);
+    }
 }

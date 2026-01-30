@@ -21,16 +21,16 @@ spring:
 security:
   password:
     encoder:
-      secret: ${PASSWORD_ENCODER_SECRET}
+      secret: ${PASSWORD_ENCODER_SECRET:CXVEuksocdUhvj04}
       iterations: 185000
       salt-length: 16
   jwt:
     token:
-      secret-key: ${JWT_SECRET}
+      secret-key: ${JWT_SECRET:CXVEuksocdUhvj04}
       expire-length: 36000000
 
 springdoc:
-  paths-to-match: /api/**
+  paths-to-match: /**
   swagger-ui:
     use-root-path: true
 
@@ -40,50 +40,3 @@ server:
 
 cors:
   originPatterns: ${CORS_ORIGINS:http://localhost:4200}
-
-#spring:
-#  application:
-#    name: ChatGepeteco
-#
-#  datasource:
-#    url: ${DATABASE_URL}
-#    username: ${DB_USERNAME}
-#    password: ${DB_PASSWORD}
-#    driver-class-name: org.postgresql.Driver
-#
-#  jpa:
-#    hibernate:
-#      ddl-auto: ${JPA_DDL_AUTO:validate}
-#    open-in-view: false
-#
-#  ai:
-#    ollama:
-#      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
-#      chat:
-#        model: ${OLLAMA_MODEL:gemma3:1b}
-#
-#security:
-#  password:
-#    encoder:
-#      secret: ${PASSWORD_ENCODER_SECRET}
-#      iterations: ${PASSWORD_ENCODER_ITERATIONS:185000}
-#      salt-length: ${PASSWORD_ENCODER_SALT_LENGTH:16}
-#
-#  jwt:
-#    token:
-#      secret-key: ${JWT_SECRET}
-#      expire-length: ${JWT_EXPIRE_LENGTH:36000000}
-#
-#springdoc:
-#  paths-to-match: /api/**
-#  swagger-ui:
-#    use-root-path: true
-#    enabled: ${SWAGGER_ENABLED:true}
-#
-#server:
-#  port: ${PORT:8080}
-#  servlet:
-#    context-path: /api
-#
-#cors:
-#  originPatterns: ${CORS_ORIGINS:http://localhost:4200}

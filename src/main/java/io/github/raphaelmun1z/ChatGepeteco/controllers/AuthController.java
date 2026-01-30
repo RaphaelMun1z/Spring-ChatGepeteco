@@ -2,15 +2,21 @@ package io.github.raphaelmun1z.ChatGepeteco.controllers;
 
 
 import io.github.raphaelmun1z.ChatGepeteco.controllers.docs.AuthControllerDocs;
+import io.github.raphaelmun1z.ChatGepeteco.dtos.UserDTO;
 import io.github.raphaelmun1z.ChatGepeteco.dtos.security.AccountCredentialsDTO;
 import io.github.raphaelmun1z.ChatGepeteco.dtos.security.SignUpRequestDTO;
 import io.github.raphaelmun1z.ChatGepeteco.dtos.security.TokenDTO;
 import io.github.raphaelmun1z.ChatGepeteco.dtos.security.UsuarioResponseDTO;
+import io.github.raphaelmun1z.ChatGepeteco.entities.usuario.Usuario;
 import io.github.raphaelmun1z.ChatGepeteco.services.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/auth")
@@ -40,5 +46,14 @@ public class AuthController implements AuthControllerDocs {
     public ResponseEntity<UsuarioResponseDTO> signup(@RequestBody @Valid SignUpRequestDTO dto) {
         UsuarioResponseDTO novoUsuario = authService.signup(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoUsuario);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserDTO> getCurrentUser(@AuthenticationPrincipal Usuario user) {
+        List<String> roles = user.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .toList();
+
+        return ResponseEntity.ok(new UserDTO(user.getEmail(), user.getNome(), roles));
     }
 }
